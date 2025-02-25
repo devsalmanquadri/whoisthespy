@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Who is the Spy? - Multiplayer (Dark & Animated)</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        /* Advanced Cyberpunk Dark Theme with Neon Accents */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle at center, #0d0d0d, #000000);
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: #1f1f1f;
+            border: 2px solid #00d1ff;
+            /* Neon blue border */
+            border-radius: 12px;
+            padding: 25px 35px;
+            margin: 20px;
+            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.5);
+            position: relative;
+            animation: fadeInScale 0.7s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Headers */
+        h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2.8em;
+            text-align: center;
+            color: #ffeb3b;
+            /* Bright yellow */
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+            margin-bottom: 12px;
+            color: #00d1ff;
+            /* Neon blue */
+            text-shadow: 0 0 6px #00d1ff;
+        }
+
+        /* Form Elements */
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #2c2c2c;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #00d1ff;
+            box-shadow: 0 0 10px #00d1ff;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 20px;
+            border: none;
+            background: linear-gradient(45deg, #ff8a65, #ff7043);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 209, 255, 0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 209, 255, 0.6);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Horizontal Rule */
+        hr {
+            border: none;
+            border-top: 1px solid #444;
+            margin: 20px 0;
+        }
+
+        /* Unordered List for Participants */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #222;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        li:hover {
+            background: #2a2a2a;
+        }
+
+        .out-player {
+            color: #ff5252;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ff5252;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            border: 1px solid #7f8c8d;
+            border-radius: 6px;
+            background: #121212;
+            padding: 10px;
+            /* Fixed height so that after about 5 messages, a scrollbar appears */
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+
+
+        .chat-message {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .chat-sender {
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+
+        .chat-input-group {
+            display: flex;
+        }
+
+        .chat-input-group input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #2c2c2c;
+            color: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input-group input[type="text"]:focus {
+            border-color: #00d1ff;
+        }
+
+        /* Manage Panel */
+        .manage-panel {
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            background: #121212;
+            margin: 10px 0;
+        }
+
+        /* End Round Button */
+        #endRoundSection button {
+            background: linear-gradient(45deg, #66bb6a, #81c784);
+        }
+
+        #endRoundSection button:hover {
+            background: linear-gradient(45deg, #43a047, #66bb6a);
+        }
+
+        /* Spectator Info Panel */
+        #spectatorInfo {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #121212;
+            font-size: 14px;
+            color: #00d1ff;
+        }
+
+        /* Round Number Pulse Animation */
+        @keyframes roundPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .round-animate {
+            animation: roundPulse 1s ease;
+        }
+
+        /* Extra Fun Details */
+        .container {
+            border: 2px solid #00d1ff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- MENU VIEW: Create or Join a Game -->
+    <!-- MENU VIEW: Create or Join a Game -->
+    <div class="container" id="menu">
+        <h1>Who is the Spy?</h1>
+        <h2>Create Game</h2>
+        <input type="text" id="hostNameInput" placeholder="Enter Your Name (Host)">
+        <button onclick="createGame()">Create Game</button>
+        <hr>
+        <h2>Join Game</h2>
+        <input type="text" id="joinGameCodeInput" placeholder="Enter Game Code">
+        <input type="text" id="playerNameJoinInput" placeholder="Enter Your Name">
+        <select id="roleSelect">
+            <option value="player">Join as Player</option>
+            <option value="spectator">Join as Spectator</option>
+        </select>
+        <button onclick="joinGame()">Join Game</button>
+    </div>
+
+    <!-- LOBBY VIEW: Only this container is visible after menu -->
+    <div class="container hidden" id="lobby">
+        <h1>Lobby</h1>
+        <p>Room Code: <strong id="lobbyGameCode"></strong></p>
+        <p>Round: <span id="lobbyRound">1</span></p>
+        <h2>Participants:</h2>
+        <ul id="playersList"></ul>
+        <div id="hostControls" class="hidden">
+            <button onclick="startGame()">Start Game</button>
+            <button onclick="changeWordPair()">Change Word Pair</button>
+            <button onclick="endGame()">End Game</button>
+        </div>
+        <button onclick="toggleRole()">Switch Role</button>
+        <hr>
+        <h2>Chat</h2>
+        <div class="chat-container" id="chatContainerLobby"></div>
+        <div class="chat-input-group">
+            <input type="text" id="chatInputLobby" placeholder="Type your message...">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+        <hr>
+        <button onclick="leaveGame()">Leave Game</button>
+    </div>
+
+    <!-- GAME VIEW: Visible only after game starts -->
+    <div class="container hidden" id="gameView">
+        <h1>Game - Round <span id="gameRound">1</span></h1>
+        <p>Room Code: <strong id="gameRoomCode"></strong></p>
+        <p>Welcome, <strong id="currentPlayerNameDisplay"></strong> <span id="roleDisplay"></span></p>
+        <div id="playerActions" class="hidden">
+            <button onclick="showWord()">Show My Word</button>
+            <h2>Vote for the Spy</h2>
+            <div id="voteButtons" style="text-align:center;"></div>
+        </div>
+        <button onclick="toggleRole()">Switch Role</button>
+        <h2>Your Score: <span id="playerScore">0</span></h2>
+        <!-- End Round button for active players -->
+        <div id="endRoundSection" class="hidden">
+            <button onclick="endRound()">End Round</button>
+        </div>
+        <div id="managePlayersSection" class="hidden">
+            <button onclick="toggleManagePanel()">Manage Players</button>
+            <div id="managePanel" class="manage-panel hidden"></div>
+            <button onclick="endGame()">End Game</button>
+        </div>
+        <hr>
+        <h2>Chat</h2>
+        <div class="chat-container" id="chatContainerGame"></div>
+        <div class="chat-input-group">
+            <input type="text" id="chatInputGame" placeholder="Type your message...">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+        <hr>
+        <button onclick="backToLobby()">Back to Lobby</button>
+        <!-- Spectator Info Panel: Visible only to spectators -->
+        <div id="spectatorInfo" class="hidden"></div>
+    </div>
+
+    <!-- Firebase & JavaScript -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // *** UPDATE WITH YOUR FIREBASE PROJECT CONFIGURATION ***
+        var firebaseConfig = {
+            apiKey: "AIzaSyBz-61kpp649sRpszY6QzxPoK1_EeecR4I",
+            authDomain: "who-is-the-spy-2790c.firebaseapp.com",
+            databaseURL: "https://who-is-the-spy-2790c-default-rtdb.firebaseio.com",
+            projectId: "who-is-the-spy-2790c",
+            storageBucket: "who-is-the-spy-2790c.firebasestorage.app",
+            messagingSenderId: "666150577720",
+            appId: "1:666150577720:web:ea50455ec29ea0a93ee8cd",
+            measurementId: "G-YKSRP0LYRQ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        // Global Variables
+        let currentRoom = null;
+        let currentPlayerName = null;
+        let isHost = false;
+        let isSpectator = false;
+        let gameResetInProgress = false; // Prevent multiple resets
+
+        // Word list with over 100 word pairs
+        const wordPairs = [
+            { common: "Bread", spy: "Cake" },
+            { common: "Coffee", spy: "Tea" },
+            { common: "Sun", spy: "Moon" },
+            { common: "Car", spy: "Bike" },
+            { common: "River", spy: "Stream" },
+            { common: "Paper", spy: "Notebook" },
+            { common: "Phone", spy: "Tablet" },
+            { common: "Dog", spy: "Cat" },
+            { common: "Mountain", spy: "Hill" },
+            { common: "Ocean", spy: "Lake" },
+            { common: "Chair", spy: "Stool" },
+            { common: "Pen", spy: "Pencil" },
+            { common: "Keyboard", spy: "Mouse" },
+            { common: "Window", spy: "Door" },
+            { common: "Tree", spy: "Bush" },
+            { common: "Book", spy: "Magazine" },
+            { common: "Computer", spy: "Laptop" },
+            { common: "Bottle", spy: "Jar" },
+            { common: "Flower", spy: "Leaf" },
+            { common: "Shirt", spy: "Sweater" },
+            { common: "Pants", spy: "Shorts" },
+            { common: "Hat", spy: "Cap" },
+            { common: "Shoe", spy: "Boot" },
+            { common: "Sofa", spy: "Couch" },
+            { common: "Lamp", spy: "Candle" },
+            { common: "Clock", spy: "Watch" },
+            { common: "Bag", spy: "Backpack" },
+            { common: "Glasses", spy: "Sunglasses" },
+            { common: "Music", spy: "Dance" },
+            { common: "Painting", spy: "Sculpture" },
+            { common: "Ice", spy: "Snow" },
+            { common: "Fire", spy: "Flame" },
+            { common: "Water", spy: "Juice" },
+            { common: "Chocolate", spy: "Candy" },
+            { common: "Beer", spy: "Wine" },
+            { common: "House", spy: "Apartment" },
+            { common: "Road", spy: "Path" },
+            { common: "City", spy: "Town" },
+            { common: "Country", spy: "State" },
+            { common: "Garden", spy: "Park" },
+            { common: "Fountain", spy: "Well" },
+            { common: "Ring", spy: "Necklace" },
+            { common: "Cup", spy: "Mug" },
+            { common: "Plate", spy: "Bowl" },
+            { common: "Fork", spy: "Spoon" },
+            { common: "Knife", spy: "Scissors" },
+            { common: "Rain", spy: "Snow" },
+            { common: "Cloud", spy: "Fog" },
+            { common: "Earth", spy: "Soil" },
+            { common: "Planet", spy: "Star" },
+            { common: "Galaxy", spy: "Universe" },
+            { common: "Boat", spy: "Ship" },
+            { common: "Train", spy: "Bus" },
+            { common: "Plane", spy: "Helicopter" },
+            { common: "Rocket", spy: "Missile" },
+            { common: "Sand", spy: "Dust" },
+            { common: "Volcano", spy: "Crater" },
+            { common: "Desert", spy: "Oasis" },
+            { common: "Jungle", spy: "Forest" },
+            { common: "Waterfall", spy: "Cascade" },
+            { common: "Field", spy: "Meadow" },
+            { common: "Corn", spy: "Wheat" },
+            { common: "Farm", spy: "Ranch" },
+            { common: "Chicken", spy: "Duck" },
+            { common: "Pig", spy: "Cow" },
+            { common: "Sheep", spy: "Goat" },
+            { common: "Fish", spy: "Shrimp" },
+            { common: "Crab", spy: "Lobster" },
+            { common: "Apple", spy: "Orange" },
+            { common: "Banana", spy: "Grape" },
+            { common: "Cherry", spy: "Strawberry" },
+            { common: "Pineapple", spy: "Mango" },
+            { common: "Lemon", spy: "Lime" },
+            { common: "Peach", spy: "Plum" },
+            { common: "Watermelon", spy: "Cantaloupe" },
+            { common: "Berry", spy: "Raspberry" },
+            { common: "Kiwi", spy: "Papaya" },
+            { common: "Coconut", spy: "Avocado" },
+            { common: "Spinach", spy: "Lettuce" },
+            { common: "Carrot", spy: "Beet" },
+            { common: "Potato", spy: "Yam" },
+            { common: "Onion", spy: "Garlic" },
+            { common: "Tomato", spy: "Cucumber" },
+            { common: "Pepper", spy: "Chili" },
+            { common: "Mushroom", spy: "Truffle" },
+            { common: "Croissant", spy: "Donut" },
+            { common: "Pasta", spy: "Noodle" },
+            { common: "Rice", spy: "Quinoa" },
+            { common: "Soup", spy: "Stew" },
+            { common: "Salad", spy: "Coleslaw" },
+            { common: "Burger", spy: "Hotdog" },
+            { common: "Fries", spy: "Onion Rings" },
+            { common: "Pizza", spy: "Calzone" },
+            { common: "Sushi", spy: "Sashimi" },
+            { common: "Ice Cream", spy: "Gelato" },
+            { common: "Cake", spy: "Pie" },
+            { common: "Cookie", spy: "Brownie" },
+            { common: "Candy", spy: "Chocolate" },
+            { common: "Coffee", spy: "Espresso" },
+            { common: "Tea", spy: "Iced Tea" },
+            { common: "Juice", spy: "Smoothie" }
+        ];
+
+        // MENU FUNCTIONS
+        function createGame() {
+            const hostName = document.getElementById('hostNameInput').value.trim();
+            if (!hostName) { alert('Please enter your name.'); return; }
+            const gameCode = Math.floor(1000 + Math.random() * 9000).toString();
+            currentRoom = gameCode;
+            currentPlayerName = hostName;
+            isHost = true;
+            isSpectator = false;
+            const randomPair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+            database.ref('rooms/' + gameCode).set({
+                host: hostName,
+                gameStarted: false,
+                round: 1,
+                currentWordPair: randomPair,
+                players: {},
+                chat: {}
+            }).then(() => {
+                addPlayerToRoom(hostName, false);
+                switchToLobby();
+            });
+        }
+
+        function joinGame() {
+            const gameCode = document.getElementById('joinGameCodeInput').value.trim();
+            const playerName = document.getElementById('playerNameJoinInput').value.trim();
+            let role = document.getElementById('roleSelect').value;
+            if (!gameCode || !playerName) { alert('Please enter game code and your name.'); return; }
+            database.ref('rooms/' + gameCode).once('value', snapshot => {
+                if (snapshot.exists()) {
+                    currentRoom = gameCode;
+                    currentPlayerName = playerName;
+                    if (snapshot.val().gameStarted) {
+                        role = "spectator";
+                        alert("Game already started. You will join as a spectator.");
+                    }
+                    isHost = (snapshot.val().host === playerName);
+                    isSpectator = (role === "spectator");
+                    addPlayerToRoom(playerName, isSpectator);
+                    switchToLobby();
+                } else { alert('Game room not found!'); }
+            });
+        }
+
+        function addPlayerToRoom(playerName, spectator) {
+            const playerData = {
+                score: 0,
+                word: "",
+                isSpy: false,
+                hasVoted: false,
+                hasEndedRound: false,
+                isSpectator: spectator,
+                isOut: false
+            };
+            database.ref('rooms/' + currentRoom + '/players/' + playerName).set(playerData);
+            listenToRoom();
+            listenToChat();
+        }
+
+        // ROOM LISTENER & UI UPDATES
+        function listenToRoom() {
+            database.ref('rooms/' + currentRoom).on('value', snapshot => {
+                const roomData = snapshot.val();
+                if (!roomData) {
+                    alert("Game has ended. Returning to main menu.");
+                    resetLocalState();
+                    return;
+                }
+                // Always show room code
+                document.getElementById('lobbyGameCode').innerText = currentRoom;
+                document.getElementById('lobbyRound').innerText = roomData.round;
+                document.getElementById('gameRoomCode').innerText = currentRoom;
+                updatePlayersList(roomData.players);
+                if (roomData.gameStarted) {
+                    // If no active spy is found (due to kick/elimination), trigger reset only once.
+                    if (!gameResetInProgress) {
+                        let spyFound = false;
+                        for (let name in roomData.players) {
+                            if (!roomData.players[name].isSpectator && roomData.players[name].isSpy && !roomData.players[name].isOut) {
+                                spyFound = true;
+                                break;
+                            }
+                        }
+                        if (!spyFound) {
+                            gameResetInProgress = true;
+                            addChatMessage('System', "No active spy found. Ending round.");
+                            database.ref('rooms/' + currentRoom).update({ gameStarted: false }).then(() => {
+                                setTimeout(resetGame, 2000);
+                            });
+                            return;
+                        }
+                    }
+                    switchToGameView(roomData);
+                } else {
+                    document.getElementById('lobby').classList.remove('hidden');
+                    document.getElementById('gameView').classList.add('hidden');
+                }
+                if (isHost) {
+                    document.getElementById('hostControls').classList.remove('hidden');
+                    document.getElementById('managePlayersSection').classList.remove('hidden');
+                } else {
+                    document.getElementById('hostControls').classList.add('hidden');
+                    document.getElementById('managePlayersSection').classList.add('hidden');
+                }
+            });
+        }
+
+        function updatePlayersList(players) {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            for (let participant in players) {
+                const pData = players[participant];
+                let li = document.createElement('li');
+                li.innerText = participant + ' (Score: ' + pData.score + ') ' + (pData.isSpectator ? '[Spectator]' : '');
+                if (pData.isOut) { li.classList.add('out-player'); }
+                if (isHost && participant !== currentPlayerName) {
+                    let kickBtn = document.createElement('button');
+                    kickBtn.innerText = 'Kick';
+                    kickBtn.className = 'kick-btn';
+                    kickBtn.onclick = () => kickPlayer(participant);
+                    li.appendChild(kickBtn);
+                }
+                playersList.appendChild(li);
+            }
+            if (isHost) updateManagePanel(players);
+        }
+
+        function kickPlayer(participantName) {
+            if (!isHost) return;
+            database.ref('rooms/' + currentRoom + '/players/' + participantName).once('value', snapshot => {
+                const pData = snapshot.val();
+                // If the kicked player is the active spy, force game to end round.
+                if (pData && pData.isSpy) {
+                    database.ref('rooms/' + currentRoom).update({ gameStarted: false });
+                }
+                if (confirm('Kick ' + participantName + '?')) {
+                    database.ref('rooms/' + currentRoom + '/players/' + participantName).remove();
+                    addChatMessage('System', participantName + ' was kicked by the host.');
+                }
+            });
+        }
+
+        function switchToLobby() {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('lobby').classList.remove('hidden');
+            document.getElementById('gameView').classList.add('hidden');
+        }
+
+        // CHAT FUNCTIONS
+        function listenToChat() {
+            database.ref('rooms/' + currentRoom + '/chat').on('child_added', snapshot => {
+                const msg = snapshot.val();
+                displayChatMessage(msg.sender, msg.message, msg.timestamp);
+            });
+        }
+
+        function displayChatMessage(sender, message, timestamp) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'chat-message';
+            const time = new Date(timestamp).toLocaleTimeString();
+            messageElement.innerHTML = '<span class="chat-sender">' + sender + '</span> [' + time + ']: ' + message;
+            let chatContainer = document.getElementById('lobby').classList.contains('hidden')
+                ? document.getElementById('chatContainerGame')
+                : document.getElementById('chatContainerLobby');
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            let chatInput = document.getElementById('lobby').classList.contains('hidden')
+                ? document.getElementById('chatInputGame')
+                : document.getElementById('chatInputLobby');
+            const message = chatInput.value.trim();
+            if (!message) return;
+            const msgData = { sender: currentPlayerName, message: message, timestamp: Date.now() };
+            database.ref('rooms/' + currentRoom + '/chat').push(msgData);
+            chatInput.value = '';
+        }
+
+        function addChatMessage(sender, message) {
+            const msgData = { sender: sender, message: message, timestamp: Date.now() };
+            database.ref('rooms/' + currentRoom + '/chat').push(msgData);
+        }
+
+        // GAME FUNCTIONS
+        function showWord() {
+            if (isSpectator) {
+                alert("Spectators do not have a secret word.");
+                return;
+            }
+            database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName)
+                .once('value', snapshot => {
+                    const pData = snapshot.val();
+                    alert('Your word is: ' + pData.word);
+                });
+        }
+
+        function startGame() {
+            if (!isHost) return;
+            database.ref('rooms/' + currentRoom + '/players')
+                .once('value', snapshot => {
+                    const playersData = snapshot.val();
+                    const activePlayers = Object.keys(playersData).filter(name => !playersData[name].isSpectator && !playersData[name].isOut);
+                    if (activePlayers.length < 2) { alert("Need at least 2 active players."); return; }
+                    const randomIndex = Math.floor(Math.random() * activePlayers.length);
+                    const spyName = activePlayers[randomIndex];
+                    database.ref('rooms/' + currentRoom)
+                        .once('value', roomSnapshot => {
+                            const roomData = roomSnapshot.val();
+                            const commonWord = roomData.currentWordPair.common;
+                            const spyWord = roomData.currentWordPair.spy;
+                            let updates = {};
+                            for (let name in playersData) {
+                                if (!playersData[name].isSpectator && !playersData[name].isOut) {
+                                    updates['players/' + name + '/isSpy'] = (name === spyName);
+                                    updates['players/' + name + '/word'] = (name === spyName) ? spyWord : commonWord;
+                                    updates['players/' + name + '/hasVoted'] = false;
+                                    updates['players/' + name + '/hasEndedRound'] = false;
+                                }
+                            }
+                            updates['gameStarted'] = true;
+                            updates['votes'] = null;
+                            database.ref('rooms/' + currentRoom).update(updates);
+                            addChatMessage('System', 'Game has started! Roles assigned. [Word pair is hidden]');
+                        });
+                });
+        }
+
+        function castVote(votedName) {
+            database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName)
+                .once('value', snapshot => {
+                    const pData = snapshot.val();
+                    if (pData.hasVoted) { alert('You have already voted.'); return; }
+                    let voteUpdate = {};
+                    voteUpdate[currentPlayerName] = votedName;
+                    database.ref('rooms/' + currentRoom + '/votes').update(voteUpdate);
+                    addChatMessage('Vote', currentPlayerName + ' voted for ' + votedName);
+                    database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/hasVoted')
+                        .set(true).then(checkAllVotes);
+                });
+        }
+
+        function updateVoteButtons(players) {
+            const voteDiv = document.getElementById('voteButtons');
+            voteDiv.innerHTML = '';
+            for (let name in players) {
+                if (name === currentPlayerName) continue;
+                if (players[name].isSpectator || players[name].isOut) continue;
+                let btn = document.createElement('button');
+                btn.innerText = name;
+                btn.onclick = () => castVote(name);
+                voteDiv.appendChild(btn);
+            }
+        }
+
+        function checkAllVotes() {
+            database.ref('rooms/' + currentRoom + '/players')
+                .once('value', snapshot => {
+                    const playersData = snapshot.val();
+                    let allVoted = true;
+                    for (let name in playersData) {
+                        if (!playersData[name].isSpectator && !playersData[name].isOut && playersData[name].hasVoted === false) {
+                            allVoted = false;
+                            break;
+                        }
+                    }
+                    if (allVoted) {
+                        animateRoundNumber();
+                        tallyVotes();
+                    }
+                });
+        }
+
+        function animateRoundNumber() {
+            const roundElem = document.getElementById('gameRound');
+            roundElem.classList.add('round-animate');
+            roundElem.addEventListener('animationend', () => {
+                roundElem.classList.remove('round-animate');
+            }, { once: true });
+        }
+
+        function tallyVotes() {
+            database.ref('rooms/' + currentRoom + '/votes')
+                .once('value', snapshot => {
+                    const votes = snapshot.val() || {};
+                    let tally = {};
+                    let voteDetails = [];
+                    for (let voter in votes) {
+                        let vote = votes[voter];
+                        voteDetails.push(voter + " → " + vote);
+                        tally[vote] = (tally[vote] || 0) + 1;
+                    }
+                    addChatMessage('System', "Vote results: " + voteDetails.join(", "));
+                    let candidate = null, maxVotes = 0;
+                    for (let name in tally) {
+                        if (tally[name] > maxVotes) { candidate = name; maxVotes = tally[name]; }
+                    }
+                    database.ref('rooms/' + currentRoom + '/players/' + candidate)
+                        .once('value', snap => {
+                            const candidateData = snap.val();
+                            if (candidateData && candidateData.isSpy) {
+                                // If the spy is voted out, end the round.
+                                database.ref('rooms/' + currentRoom).update({ gameStarted: false });
+                                database.ref('rooms/' + currentRoom + '/players/' + candidate + '/isOut').set(true);
+                                addChatMessage('System', candidate + " (the spy) has been eliminated this round!");
+                                database.ref('rooms/' + currentRoom + '/players')
+                                    .once('value', snapAll => {
+                                        const allPlayers = snapAll.val();
+                                        for (let name in allPlayers) {
+                                            if (!allPlayers[name].isSpectator && !allPlayers[name].isSpy && !allPlayers[name].isOut) {
+                                                database.ref('rooms/' + currentRoom + '/players/' + name + '/score')
+                                                    .transaction(score => (score || 0) + 1);
+                                            }
+                                        }
+                                        gameResetInProgress = true;
+                                        setTimeout(resetGame, 3000);
+                                    });
+                            } else {
+                                addChatMessage('System', "Vote complete. No elimination this round. Roles and words will change.");
+                                database.ref('rooms/' + currentRoom + '/players')
+                                    .once('value', snapAll => {
+                                        const allPlayers = snapAll.val();
+                                        for (let name in allPlayers) {
+                                            if (allPlayers[name].isSpy && !allPlayers[name].isOut) {
+                                                database.ref('rooms/' + currentRoom + '/players/' + name + '/score')
+                                                    .transaction(score => (score || 0) + 1);
+                                            }
+                                        }
+                                        setTimeout(nextRound, 3000);
+                                    });
+                            }
+                            // Clear votes and reset hasVoted flags.
+                            database.ref('rooms/' + currentRoom + '/votes').remove();
+                            database.ref('rooms/' + currentRoom + '/players')
+                                .once('value', snapAll => {
+                                    const allPlayers = snapAll.val();
+                                    for (let name in allPlayers) {
+                                        if (!allPlayers[name].isSpectator && !allPlayers[name].isOut) {
+                                            database.ref('rooms/' + currentRoom + '/players/' + name + '/hasVoted').set(false);
+                                        }
+                                    }
+                                });
+                        });
+                });
+        }
+
+        function updateScore() {
+            database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/score')
+                .once('value', snapshot => {
+                    document.getElementById('playerScore').innerText = snapshot.val() || 0;
+                });
+        }
+
+        // End Round feature for active players.
+        function endRound() {
+            if (isSpectator) return;
+            database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/hasEndedRound')
+                .set(true).then(() => {
+                    addChatMessage('System', currentPlayerName + " ended their round.");
+                    checkAllEndedRound();
+                });
+        }
+
+        function checkAllEndedRound() {
+            database.ref('rooms/' + currentRoom + '/players')
+                .once('value', snapshot => {
+                    const playersData = snapshot.val();
+                    let allEnded = true;
+                    for (let name in playersData) {
+                        if (!playersData[name].isSpectator && !playersData[name].isOut && playersData[name].hasEndedRound === false) {
+                            allEnded = false;
+                            break;
+                        }
+                    }
+                    if (allEnded) {
+                        addChatMessage('System', "All active players ended the round. Advancing to next round.");
+                        nextRound();
+                    }
+                });
+        }
+
+        // nextRound: Host-only auto-advances the round.
+        function nextRound() {
+            if (!isHost) return;
+            database.ref('rooms/' + currentRoom)
+                .once('value', snapshot => {
+                    const roomData = snapshot.val();
+                    const newRound = roomData.round + 1;
+                    const playersData = roomData.players;
+                    const activePlayers = Object.keys(playersData).filter(name => !playersData[name].isSpectator && !playersData[name].isOut);
+                    if (activePlayers.length < 2) {
+                        addChatMessage('System', "Not enough active players for next round. Ending game.");
+                        gameResetInProgress = true;
+                        setTimeout(resetGame, 2000);
+                        return;
+                    }
+                    const randomIndex = Math.floor(Math.random() * activePlayers.length);
+                    const spyName = activePlayers[randomIndex];
+                    let updates = { round: newRound };
+                    for (let name in playersData) {
+                        if (!playersData[name].isSpectator && !playersData[name].isOut) {
+                            updates['players/' + name + '/isSpy'] = (name === spyName);
+                            updates['players/' + name + '/word'] = (name === spyName) ? roomData.currentWordPair.spy : roomData.currentWordPair.common;
+                            updates['players/' + name + '/hasVoted'] = false;
+                            updates['players/' + name + '/hasEndedRound'] = false;
+                        }
+                    }
+                    updates['votes'] = null;
+                    database.ref('rooms/' + currentRoom).update(updates);
+                    addChatMessage('System', 'New round started! Roles and words changed. [New word pair is hidden]');
+                });
+        }
+
+        function changeWordPair() {
+            if (!isHost) return;
+            const newPair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+            database.ref('rooms/' + currentRoom + '/currentWordPair').set(newPair)
+                .then(() => { addChatMessage('System', 'Word pair changed by host.'); });
+        }
+
+        function switchToGameView(roomData) {
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('gameView').classList.remove('hidden');
+            document.getElementById('gameRound').innerText = roomData.round;
+            document.getElementById('currentPlayerNameDisplay').innerText = currentPlayerName;
+            // For non-spectators, show [Spy] if applicable.
+            if (!isSpectator && roomData.players[currentPlayerName] && roomData.players[currentPlayerName].isSpy) {
+                document.getElementById('roleDisplay').innerText = ' [Spy]';
+            } else if (isSpectator) {
+                document.getElementById('roleDisplay').innerText = ' [Spectator]';
+            } else {
+                document.getElementById('roleDisplay').innerText = '';
+            }
+            if (!isSpectator) {
+                document.getElementById('playerActions').classList.remove('hidden');
+                updateVoteButtons(roomData.players);
+                document.getElementById('endRoundSection').classList.remove('hidden');
+            } else {
+                document.getElementById('playerActions').classList.add('hidden');
+                document.getElementById('endRoundSection').classList.add('hidden');
+                // For spectators, display full info.
+                let spectatorInfo = document.getElementById("spectatorInfo");
+                if (!spectatorInfo) {
+                    spectatorInfo = document.createElement("div");
+                    spectatorInfo.id = "spectatorInfo";
+                    document.getElementById("gameView").appendChild(spectatorInfo);
+                }
+                let spyIdentity = "Unknown";
+                for (let name in roomData.players) {
+                    if (!roomData.players[name].isSpectator && roomData.players[name].isSpy && !roomData.players[name].isOut) {
+                        spyIdentity = name;
+                        break;
+                    }
+                }
+                spectatorInfo.innerHTML = `<p><strong>Spectator Info:</strong><br>Spy: ${spyIdentity}<br>Word Pair: ${roomData.currentWordPair.common} / ${roomData.currentWordPair.spy}</p>`;
+                spectatorInfo.style.display = "block";
+            }
+            updateScore();
+        }
+
+        function toggleManagePanel() {
+            const panel = document.getElementById('managePanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function updateManagePanel(players) {
+            const panel = document.getElementById('managePanel');
+            panel.innerHTML = '<strong>Manage Participants:</strong><br>';
+            for (let name in players) {
+                if (name === currentPlayerName) continue;
+                const pData = players[name];
+                const pDiv = document.createElement('div');
+                pDiv.style.marginBottom = "5px";
+                pDiv.innerText = name + (pData.isSpectator ? " [Spectator]" : "");
+                if (pData.isOut) { pDiv.style.color = "#e74c3c"; }
+                let kickBtn = document.createElement('button');
+                kickBtn.innerText = 'Kick';
+                kickBtn.className = 'kick-btn';
+                kickBtn.style.marginLeft = "10px";
+                kickBtn.onclick = () => kickPlayer(name);
+                pDiv.appendChild(kickBtn);
+                let outBtn = document.createElement('button');
+                outBtn.innerText = pData.isOut ? "Reset Out" : "Mark Out";
+                outBtn.style.marginLeft = "10px";
+                outBtn.onclick = () => {
+                    database.ref('rooms/' + currentRoom + '/players/' + name + '/isOut').set(!pData.isOut);
+                };
+                pDiv.appendChild(outBtn);
+                panel.appendChild(pDiv);
+            }
+        }
+
+        function backToLobby() {
+            document.getElementById('gameView').classList.add('hidden');
+            document.getElementById('lobby').classList.remove('hidden');
+        }
+
+        function endGame() {
+            if (!isHost) return;
+            if (confirm('End the game and reset for a new game?')) {
+                gameResetInProgress = true;
+                resetGame();
+            }
+        }
+
+        // resetGame: Resets the game state without deleting the room.
+        function resetGame() {
+            database.ref('rooms/' + currentRoom)
+                .once('value', snapshot => {
+                    const roomData = snapshot.val();
+                    let updates = { gameStarted: false, round: 1, votes: null };
+                    for (let name in roomData.players) {
+                        updates['players/' + name + '/hasVoted'] = false;
+                        updates['players/' + name + '/hasEndedRound'] = false;
+                        updates['players/' + name + '/isOut'] = false;
+                        updates['players/' + name + '/isSpy'] = false;
+                        updates['players/' + name + '/word'] = "";
+                    }
+                    database.ref('rooms/' + currentRoom).update(updates);
+                    addChatMessage('System', 'Game ended and reset. You may now switch roles and start a new game.');
+                    gameResetInProgress = false;
+                });
+        }
+
+        function toggleRole() {
+            database.ref('rooms/' + currentRoom).once('value', snapshot => {
+                const roomData = snapshot.val();
+                if (roomData.gameStarted) {
+                    alert("Cannot change role mid-game.");
+                    return;
+                }
+                database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/isSpectator')
+                    .once('value', snap => {
+                        let currentRole = snap.val();
+                        database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/isSpectator')
+                            .set(!currentRole)
+                            .then(() => {
+                                isSpectator = !currentRole;
+                                addChatMessage('System', currentPlayerName + " switched to " + (isSpectator ? "Spectator" : "Player") + " mode.");
+                            });
+                    });
+            });
+        }
+
+        function updateLocalScore() { updateScore(); }
+
+        function resetLocalState() {
+            currentRoom = null;
+            currentPlayerName = null;
+            isHost = false;
+            isSpectator = false;
+            gameResetInProgress = false;
+            document.getElementById('menu').classList.remove('hidden');
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('gameView').classList.add('hidden');
+        }
+
+        window.onbeforeunload = function () {
+            if (currentRoom && currentPlayerName) {
+                database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName).remove();
+            }
+        };
+    </script>
+</body>
+
+</html>
