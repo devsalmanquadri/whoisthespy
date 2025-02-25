@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Who is the Spy? - Multiplayer (Dark & Animated)</title>
+    <title>Who is the Spy? - Multiplayer (Dark Neon Theme)</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Luckiest+Guy&display=swap" rel="stylesheet">
     <style>
-        /* Advanced Cyberpunk Dark Theme with Neon Accents */
+        /* Advanced Cyberpunk Dark Theme with Neon Accents and Uniform Sizing */
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
@@ -25,13 +25,13 @@
             max-width: 600px;
             background: #1f1f1f;
             border: 2px solid #00d1ff;
-            /* Neon blue border */
             border-radius: 12px;
             padding: 25px 35px;
             margin: 20px;
             box-shadow: 0 8px 20px rgba(0, 209, 255, 0.5);
             position: relative;
             animation: fadeInScale 0.7s ease-out;
+            box-sizing: border-box;
         }
 
         @keyframes fadeInScale {
@@ -56,7 +56,6 @@
             font-size: 2.8em;
             text-align: center;
             color: #ffeb3b;
-            /* Bright yellow */
             margin-bottom: 10px;
             text-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
         }
@@ -66,7 +65,6 @@
             text-align: center;
             margin-bottom: 12px;
             color: #00d1ff;
-            /* Neon blue */
             text-shadow: 0 0 6px #00d1ff;
         }
 
@@ -81,6 +79,7 @@
             background: #2c2c2c;
             color: #fff;
             font-size: 16px;
+            box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -121,20 +120,23 @@
             margin: 20px 0;
         }
 
-        /* Unordered List for Participants */
+        /* Participants List */
         ul {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
 
         li {
             background: #222;
             margin: 8px 0;
-            padding: 10px;
+            padding: 10px 12px;
             border-radius: 6px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            min-height: 48px;
+            box-sizing: border-box;
             transition: background 0.3s ease;
         }
 
@@ -150,16 +152,15 @@
 
         /* Chat Styles */
         .chat-container {
-            border: 1px solid #7f8c8d;
+            border: 1px solid #444;
             border-radius: 6px;
             background: #121212;
             padding: 10px;
-            /* Fixed height so that after about 5 messages, a scrollbar appears */
-            max-height: 150px;
+            max-height: 100px;
             overflow-y: auto;
             margin-bottom: 12px;
+            box-sizing: border-box;
         }
-
 
         .chat-message {
             margin-bottom: 8px;
@@ -184,6 +185,7 @@
             background: #2c2c2c;
             color: #fff;
             transition: border-color 0.3s ease;
+            box-sizing: border-box;
         }
 
         .chat-input-group input[type="text"]:focus {
@@ -241,7 +243,7 @@
             animation: roundPulse 1s ease;
         }
 
-        /* Extra Fun Details */
+        /* Extra Fun Touches */
         .container {
             border: 2px solid #00d1ff;
         }
@@ -249,7 +251,6 @@
 </head>
 
 <body>
-    <!-- MENU VIEW: Create or Join a Game -->
     <!-- MENU VIEW: Create or Join a Game -->
     <div class="container" id="menu">
         <h1>Who is the Spy?</h1>
@@ -265,9 +266,12 @@
             <option value="spectator">Join as Spectator</option>
         </select>
         <button onclick="joinGame()">Join Game</button>
+        <hr>
+        <!-- Clear Progress Button -->
+        <button onclick="clearProgress()">Clear Progress</button>
     </div>
 
-    <!-- LOBBY VIEW: Only this container is visible after menu -->
+    <!-- LOBBY VIEW -->
     <div class="container hidden" id="lobby">
         <h1>Lobby</h1>
         <p>Room Code: <strong id="lobbyGameCode"></strong></p>
@@ -291,7 +295,7 @@
         <button onclick="leaveGame()">Leave Game</button>
     </div>
 
-    <!-- GAME VIEW: Visible only after game starts -->
+    <!-- GAME VIEW -->
     <div class="container hidden" id="gameView">
         <h1>Game - Round <span id="gameRound">1</span></h1>
         <p>Room Code: <strong id="gameRoomCode"></strong></p>
@@ -303,7 +307,6 @@
         </div>
         <button onclick="toggleRole()">Switch Role</button>
         <h2>Your Score: <span id="playerScore">0</span></h2>
-        <!-- End Round button for active players -->
         <div id="endRoundSection" class="hidden">
             <button onclick="endRound()">End Round</button>
         </div>
@@ -321,7 +324,7 @@
         </div>
         <hr>
         <button onclick="backToLobby()">Back to Lobby</button>
-        <!-- Spectator Info Panel: Visible only to spectators -->
+        <!-- Spectator Info Panel (visible only for spectators) -->
         <div id="spectatorInfo" class="hidden"></div>
     </div>
 
@@ -329,7 +332,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // *** UPDATE WITH YOUR FIREBASE PROJECT CONFIGURATION ***
+        /* UPDATE WITH YOUR FIREBASE PROJECT CONFIGURATION */
         var firebaseConfig = {
             apiKey: "AIzaSyBz-61kpp649sRpszY6QzxPoK1_EeecR4I",
             authDomain: "who-is-the-spy-2790c.firebaseapp.com",
@@ -350,113 +353,22 @@
         let isSpectator = false;
         let gameResetInProgress = false; // Prevent multiple resets
 
-        // Word list with over 100 word pairs
-        const wordPairs = [
-            { common: "Bread", spy: "Cake" },
-            { common: "Coffee", spy: "Tea" },
-            { common: "Sun", spy: "Moon" },
-            { common: "Car", spy: "Bike" },
-            { common: "River", spy: "Stream" },
-            { common: "Paper", spy: "Notebook" },
-            { common: "Phone", spy: "Tablet" },
-            { common: "Dog", spy: "Cat" },
-            { common: "Mountain", spy: "Hill" },
-            { common: "Ocean", spy: "Lake" },
-            { common: "Chair", spy: "Stool" },
-            { common: "Pen", spy: "Pencil" },
-            { common: "Keyboard", spy: "Mouse" },
-            { common: "Window", spy: "Door" },
-            { common: "Tree", spy: "Bush" },
-            { common: "Book", spy: "Magazine" },
-            { common: "Computer", spy: "Laptop" },
-            { common: "Bottle", spy: "Jar" },
-            { common: "Flower", spy: "Leaf" },
-            { common: "Shirt", spy: "Sweater" },
-            { common: "Pants", spy: "Shorts" },
-            { common: "Hat", spy: "Cap" },
-            { common: "Shoe", spy: "Boot" },
-            { common: "Sofa", spy: "Couch" },
-            { common: "Lamp", spy: "Candle" },
-            { common: "Clock", spy: "Watch" },
-            { common: "Bag", spy: "Backpack" },
-            { common: "Glasses", spy: "Sunglasses" },
-            { common: "Music", spy: "Dance" },
-            { common: "Painting", spy: "Sculpture" },
-            { common: "Ice", spy: "Snow" },
-            { common: "Fire", spy: "Flame" },
-            { common: "Water", spy: "Juice" },
-            { common: "Chocolate", spy: "Candy" },
-            { common: "Beer", spy: "Wine" },
-            { common: "House", spy: "Apartment" },
-            { common: "Road", spy: "Path" },
-            { common: "City", spy: "Town" },
-            { common: "Country", spy: "State" },
-            { common: "Garden", spy: "Park" },
-            { common: "Fountain", spy: "Well" },
-            { common: "Ring", spy: "Necklace" },
-            { common: "Cup", spy: "Mug" },
-            { common: "Plate", spy: "Bowl" },
-            { common: "Fork", spy: "Spoon" },
-            { common: "Knife", spy: "Scissors" },
-            { common: "Rain", spy: "Snow" },
-            { common: "Cloud", spy: "Fog" },
-            { common: "Earth", spy: "Soil" },
-            { common: "Planet", spy: "Star" },
-            { common: "Galaxy", spy: "Universe" },
-            { common: "Boat", spy: "Ship" },
-            { common: "Train", spy: "Bus" },
-            { common: "Plane", spy: "Helicopter" },
-            { common: "Rocket", spy: "Missile" },
-            { common: "Sand", spy: "Dust" },
-            { common: "Volcano", spy: "Crater" },
-            { common: "Desert", spy: "Oasis" },
-            { common: "Jungle", spy: "Forest" },
-            { common: "Waterfall", spy: "Cascade" },
-            { common: "Field", spy: "Meadow" },
-            { common: "Corn", spy: "Wheat" },
-            { common: "Farm", spy: "Ranch" },
-            { common: "Chicken", spy: "Duck" },
-            { common: "Pig", spy: "Cow" },
-            { common: "Sheep", spy: "Goat" },
-            { common: "Fish", spy: "Shrimp" },
-            { common: "Crab", spy: "Lobster" },
-            { common: "Apple", spy: "Orange" },
-            { common: "Banana", spy: "Grape" },
-            { common: "Cherry", spy: "Strawberry" },
-            { common: "Pineapple", spy: "Mango" },
-            { common: "Lemon", spy: "Lime" },
-            { common: "Peach", spy: "Plum" },
-            { common: "Watermelon", spy: "Cantaloupe" },
-            { common: "Berry", spy: "Raspberry" },
-            { common: "Kiwi", spy: "Papaya" },
-            { common: "Coconut", spy: "Avocado" },
-            { common: "Spinach", spy: "Lettuce" },
-            { common: "Carrot", spy: "Beet" },
-            { common: "Potato", spy: "Yam" },
-            { common: "Onion", spy: "Garlic" },
-            { common: "Tomato", spy: "Cucumber" },
-            { common: "Pepper", spy: "Chili" },
-            { common: "Mushroom", spy: "Truffle" },
-            { common: "Croissant", spy: "Donut" },
-            { common: "Pasta", spy: "Noodle" },
-            { common: "Rice", spy: "Quinoa" },
-            { common: "Soup", spy: "Stew" },
-            { common: "Salad", spy: "Coleslaw" },
-            { common: "Burger", spy: "Hotdog" },
-            { common: "Fries", spy: "Onion Rings" },
-            { common: "Pizza", spy: "Calzone" },
-            { common: "Sushi", spy: "Sashimi" },
-            { common: "Ice Cream", spy: "Gelato" },
-            { common: "Cake", spy: "Pie" },
-            { common: "Cookie", spy: "Brownie" },
-            { common: "Candy", spy: "Chocolate" },
-            { common: "Coffee", spy: "Espresso" },
-            { common: "Tea", spy: "Iced Tea" },
-            { common: "Juice", spy: "Smoothie" }
-        ];
+        /* We'll store a JSON object {room, name} in localStorage under the key "playerInfo"
+           to ensure the same browser cannot rejoin a room if they were previously in it.
+           To allow joining again, the user must click "Clear Progress" on the home page.
+        */
+        function clearProgress() {
+            localStorage.removeItem("playerInfo");
+            alert("Progress cleared. You can now join or create a new game.");
+        }
 
-        // MENU FUNCTIONS
+        /* MENU FUNCTIONS */
         function createGame() {
+            // Check if there's already a record in localStorage
+            if (localStorage.getItem("playerInfo")) {
+                alert("You have already joined a game in this browser. Please leave the current game or click 'Clear Progress' to start over.");
+                return;
+            }
             const hostName = document.getElementById('hostNameInput').value.trim();
             if (!hostName) { alert('Please enter your name.'); return; }
             const gameCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -473,7 +385,8 @@
                 players: {},
                 chat: {}
             }).then(() => {
-                addPlayerToRoom(hostName, false);
+                addPlayerToRoom(hostName, false, "unknown");
+                localStorage.setItem("playerInfo", JSON.stringify({ room: gameCode, name: hostName }));
                 switchToLobby();
             });
         }
@@ -483,6 +396,19 @@
             const playerName = document.getElementById('playerNameJoinInput').value.trim();
             let role = document.getElementById('roleSelect').value;
             if (!gameCode || !playerName) { alert('Please enter game code and your name.'); return; }
+            // Check localStorage: if playerInfo exists and the stored room equals the game code, block join.
+            const storedInfoStr = localStorage.getItem("playerInfo");
+            if (storedInfoStr) {
+                const storedInfo = JSON.parse(storedInfoStr);
+                if (storedInfo.room === gameCode) {
+                    alert("You have already been in this room. Please clear progress before rejoining this room.");
+                    return;
+                }
+            }
+            actuallyJoinGame(gameCode, playerName, role);
+        }
+
+        function actuallyJoinGame(gameCode, playerName, role) {
             database.ref('rooms/' + gameCode).once('value', snapshot => {
                 if (snapshot.exists()) {
                     currentRoom = gameCode;
@@ -493,13 +419,19 @@
                     }
                     isHost = (snapshot.val().host === playerName);
                     isSpectator = (role === "spectator");
-                    addPlayerToRoom(playerName, isSpectator);
+                    addPlayerToRoom(playerName, isSpectator, "unknown");
+                    localStorage.setItem("playerInfo", JSON.stringify({ room: gameCode, name: playerName }));
                     switchToLobby();
-                } else { alert('Game room not found!'); }
+                } else {
+                    alert('Game room not found!');
+                }
             });
         }
 
-        function addPlayerToRoom(playerName, spectator) {
+        function addPlayerToRoom(playerName, spectator, ipAddress) {
+            if (typeof ipAddress === "undefined" || ipAddress === null) {
+                ipAddress = "unknown";
+            }
             const playerData = {
                 score: 0,
                 word: "",
@@ -507,14 +439,15 @@
                 hasVoted: false,
                 hasEndedRound: false,
                 isSpectator: spectator,
-                isOut: false
+                isOut: false,
+                ip: ipAddress
             };
             database.ref('rooms/' + currentRoom + '/players/' + playerName).set(playerData);
             listenToRoom();
             listenToChat();
         }
 
-        // ROOM LISTENER & UI UPDATES
+        /* ROOM LISTENER & UI UPDATES */
         function listenToRoom() {
             database.ref('rooms/' + currentRoom).on('value', snapshot => {
                 const roomData = snapshot.val();
@@ -523,13 +456,11 @@
                     resetLocalState();
                     return;
                 }
-                // Always show room code
                 document.getElementById('lobbyGameCode').innerText = currentRoom;
                 document.getElementById('lobbyRound').innerText = roomData.round;
                 document.getElementById('gameRoomCode').innerText = currentRoom;
                 updatePlayersList(roomData.players);
                 if (roomData.gameStarted) {
-                    // If no active spy is found (due to kick/elimination), trigger reset only once.
                     if (!gameResetInProgress) {
                         let spyFound = false;
                         for (let name in roomData.players) {
@@ -586,7 +517,6 @@
             if (!isHost) return;
             database.ref('rooms/' + currentRoom + '/players/' + participantName).once('value', snapshot => {
                 const pData = snapshot.val();
-                // If the kicked player is the active spy, force game to end round.
                 if (pData && pData.isSpy) {
                     database.ref('rooms/' + currentRoom).update({ gameStarted: false });
                 }
@@ -603,7 +533,7 @@
             document.getElementById('gameView').classList.add('hidden');
         }
 
-        // CHAT FUNCTIONS
+        /* CHAT FUNCTIONS */
         function listenToChat() {
             database.ref('rooms/' + currentRoom + '/chat').on('child_added', snapshot => {
                 const msg = snapshot.val();
@@ -639,7 +569,7 @@
             database.ref('rooms/' + currentRoom + '/chat').push(msgData);
         }
 
-        // GAME FUNCTIONS
+        /* GAME FUNCTIONS */
         function showWord() {
             if (isSpectator) {
                 alert("Spectators do not have a secret word.");
@@ -731,9 +661,7 @@
         function animateRoundNumber() {
             const roundElem = document.getElementById('gameRound');
             roundElem.classList.add('round-animate');
-            roundElem.addEventListener('animationend', () => {
-                roundElem.classList.remove('round-animate');
-            }, { once: true });
+            roundElem.addEventListener('animationend', () => { roundElem.classList.remove('round-animate'); }, { once: true });
         }
 
         function tallyVotes() {
@@ -756,7 +684,6 @@
                         .once('value', snap => {
                             const candidateData = snap.val();
                             if (candidateData && candidateData.isSpy) {
-                                // If the spy is voted out, end the round.
                                 database.ref('rooms/' + currentRoom).update({ gameStarted: false });
                                 database.ref('rooms/' + currentRoom + '/players/' + candidate + '/isOut').set(true);
                                 addChatMessage('System', candidate + " (the spy) has been eliminated this round!");
@@ -786,7 +713,6 @@
                                         setTimeout(nextRound, 3000);
                                     });
                             }
-                            // Clear votes and reset hasVoted flags.
                             database.ref('rooms/' + currentRoom + '/votes').remove();
                             database.ref('rooms/' + currentRoom + '/players')
                                 .once('value', snapAll => {
@@ -808,7 +734,7 @@
                 });
         }
 
-        // End Round feature for active players.
+        /* End Round Feature for Active Players */
         function endRound() {
             if (isSpectator) return;
             database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/hasEndedRound')
@@ -836,7 +762,6 @@
                 });
         }
 
-        // nextRound: Host-only auto-advances the round.
         function nextRound() {
             if (!isHost) return;
             database.ref('rooms/' + currentRoom)
@@ -880,7 +805,6 @@
             document.getElementById('gameView').classList.remove('hidden');
             document.getElementById('gameRound').innerText = roomData.round;
             document.getElementById('currentPlayerNameDisplay').innerText = currentPlayerName;
-            // For non-spectators, show [Spy] if applicable.
             if (!isSpectator && roomData.players[currentPlayerName] && roomData.players[currentPlayerName].isSpy) {
                 document.getElementById('roleDisplay').innerText = ' [Spy]';
             } else if (isSpectator) {
@@ -895,13 +819,8 @@
             } else {
                 document.getElementById('playerActions').classList.add('hidden');
                 document.getElementById('endRoundSection').classList.add('hidden');
-                // For spectators, display full info.
                 let spectatorInfo = document.getElementById("spectatorInfo");
-                if (!spectatorInfo) {
-                    spectatorInfo = document.createElement("div");
-                    spectatorInfo.id = "spectatorInfo";
-                    document.getElementById("gameView").appendChild(spectatorInfo);
-                }
+                spectatorInfo.style.display = "block";
                 let spyIdentity = "Unknown";
                 for (let name in roomData.players) {
                     if (!roomData.players[name].isSpectator && roomData.players[name].isSpy && !roomData.players[name].isOut) {
@@ -909,8 +828,7 @@
                         break;
                     }
                 }
-                spectatorInfo.innerHTML = `<p><strong>Spectator Info:</strong><br>Spy: ${spyIdentity}<br>Word Pair: ${roomData.currentWordPair.common} / ${roomData.currentWordPair.spy}</p>`;
-                spectatorInfo.style.display = "block";
+                spectatorInfo.innerHTML = `<p><strong>Spectator Info:</strong><br>Active Spy: ${spyIdentity}<br>Word Pair: ${roomData.currentWordPair.common} / ${roomData.currentWordPair.spy}</p>`;
             }
             updateScore();
         }
@@ -929,7 +847,7 @@
                 const pDiv = document.createElement('div');
                 pDiv.style.marginBottom = "5px";
                 pDiv.innerText = name + (pData.isSpectator ? " [Spectator]" : "");
-                if (pData.isOut) { pDiv.style.color = "#e74c3c"; }
+                if (pData.isOut) { pDiv.style.color = "#ff5252"; }
                 let kickBtn = document.createElement('button');
                 kickBtn.innerText = 'Kick';
                 kickBtn.className = 'kick-btn';
@@ -960,7 +878,6 @@
             }
         }
 
-        // resetGame: Resets the game state without deleting the room.
         function resetGame() {
             database.ref('rooms/' + currentRoom)
                 .once('value', snapshot => {
@@ -999,7 +916,12 @@
             });
         }
 
-        function updateLocalScore() { updateScore(); }
+        function updateScore() {
+            database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName + '/score')
+                .once('value', snapshot => {
+                    document.getElementById('playerScore').innerText = snapshot.val() || 0;
+                });
+        }
 
         function resetLocalState() {
             currentRoom = null;
@@ -1007,6 +929,7 @@
             isHost = false;
             isSpectator = false;
             gameResetInProgress = false;
+            localStorage.removeItem("playerInfo");
             document.getElementById('menu').classList.remove('hidden');
             document.getElementById('lobby').classList.add('hidden');
             document.getElementById('gameView').classList.add('hidden');
@@ -1017,6 +940,148 @@
                 database.ref('rooms/' + currentRoom + '/players/' + currentPlayerName).remove();
             }
         };
+
+        /* Word Pairs: Using simple English words with distinct differences */
+        const wordPairs = [
+            { common: "coffee", spy: "water" },
+            { common: "tea", spy: "soda" },
+            { common: "milk", spy: "juice" },
+            { common: "hot chocolate", spy: "iced tea" },
+            { common: "smoothie", spy: "energy drink" },
+            { common: "lemonade", spy: "cola" },
+            { common: "espresso", spy: "iced coffee" },
+            { common: "latte", spy: "milkshake" },
+            { common: "herbal tea", spy: "sports drink" },
+            { common: "orange juice", spy: "iced coffee" },
+            { common: "laptop", spy: "television" },
+            { common: "smartphone", spy: "desktop" },
+            { common: "tablet", spy: "projector" },
+            { common: "keyboard", spy: "remote" },
+            { common: "mouse", spy: "game console" },
+            { common: "printer", spy: "scanner" },
+            { common: "router", spy: "speaker" },
+            { common: "smartwatch", spy: "digital camera" },
+            { common: "earbuds", spy: "headphones" },
+            { common: "usb drive", spy: "hard drive" },
+            { common: "car", spy: "helicopter" },
+            { common: "bicycle", spy: "motorcycle" },
+            { common: "boat", spy: "submarine" },
+            { common: "scooter", spy: "jet ski" },
+            { common: "skateboard", spy: "snowmobile" },
+            { common: "truck", spy: "ambulance" },
+            { common: "van", spy: "limousine" },
+            { common: "subway", spy: "space shuttle" },
+            { common: "tractor", spy: "race car" },
+            { common: "motorhome", spy: "yacht" },
+            { common: "house", spy: "castle" },
+            { common: "apartment", spy: "mansion" },
+            { common: "school", spy: "college" },
+            { common: "library", spy: "museum" },
+            { common: "office", spy: "factory" },
+            { common: "hotel", spy: "resort" },
+            { common: "cafe", spy: "restaurant" },
+            { common: "market", spy: "mall" },
+            { common: "church", spy: "temple" },
+            { common: "park", spy: "garden" },
+            { common: "street", spy: "avenue" },
+            { common: "car", spy: "bus" },
+            { common: "bike", spy: "motorcycle" },
+            { common: "train", spy: "plane" },
+            { common: "boat", spy: "ship" },
+            { common: "burger", spy: "hotdog" },
+            { common: "fries", spy: "chips" },
+            { common: "pizza", spy: "pasta" },
+            { common: "cake", spy: "pie" },
+            { common: "cookie", spy: "brownie" },
+            { common: "ice cream", spy: "sorbet" },
+            { common: "chocolate", spy: "candy" },
+            { common: "donut", spy: "muffin" },
+            { common: "latte", spy: "espresso" },
+            { common: "soda", spy: "lemonade" },
+            { common: "steak", spy: "ribs" },
+            { common: "pancake", spy: "waffle" },
+            { common: "bagel", spy: "croissant" },
+            { common: "spinach", spy: "kale" },
+            { common: "broccoli", spy: "cauliflower" },
+            { common: "pepper", spy: "chili" },
+            { common: "garlic", spy: "onion" },
+            { common: "lemon", spy: "lime" },
+            { common: "grape", spy: "melon" },
+            { common: "kiwi", spy: "papaya" },
+            { common: "coconut", spy: "pineapple" },
+            { common: "avocado", spy: "olive" },
+            { common: "cat", spy: "dog" },
+            { common: "mouse", spy: "rat" },
+            { common: "rabbit", spy: "squirrel" },
+            { common: "duck", spy: "goose" },
+            { common: "chicken", spy: "rooster" },
+            { common: "horse", spy: "donkey" },
+            { common: "cow", spy: "pig" },
+            { common: "sheep", spy: "goat" },
+            { common: "sun", spy: "moon" },
+            { common: "star", spy: "planet" },
+            { common: "cloud", spy: "fog" },
+            { common: "rain", spy: "snow" },
+            { common: "wind", spy: "storm" },
+            { common: "river", spy: "stream" },
+            { common: "lake", spy: "pond" },
+            { common: "mountain", spy: "hill" },
+            { common: "forest", spy: "jungle" },
+            { common: "tree", spy: "bush" },
+            { common: "flower", spy: "grass" },
+            { common: "beach", spy: "shore" },
+            { common: "desert", spy: "oasis" },
+            { common: "pen", spy: "pencil" },
+            { common: "notebook", spy: "journal" },
+            { common: "book", spy: "comic" },
+            { common: "chair", spy: "stool" },
+            { common: "table", spy: "desk" },
+            { common: "lamp", spy: "candle" },
+            { common: "door", spy: "window" },
+            { common: "bed", spy: "sofa" },
+            { common: "rug", spy: "curtain" },
+            { common: "remote", spy: "controller" },
+            { common: "phone", spy: "computer" },
+            { common: "keyboard", spy: "mouse" },
+            { common: "printer", spy: "scanner" },
+            { common: "cup", spy: "mug" },
+            { common: "plate", spy: "bowl" },
+            { common: "fork", spy: "spoon" },
+            { common: "knife", spy: "chopsticks" },
+            { common: "clock", spy: "watch" },
+            { common: "map", spy: "compass" },
+            { common: "door", spy: "gate" },
+            { common: "window", spy: "screen" },
+            { common: "cupboard", spy: "cabinet" },
+            { common: "shelf", spy: "rack" },
+            { common: "stove", spy: "oven" },
+            { common: "refrigerator", spy: "freezer" },
+            { common: "blender", spy: "toaster" },
+            { common: "soap", spy: "shampoo" },
+            { common: "towel", spy: "rag" },
+            { common: "toothbrush", spy: "toothpaste" },
+            { common: "mirror", spy: "picture" },
+            { common: "radio", spy: "tv" },
+            { common: "candle", spy: "flashlight" },
+            { common: "fan", spy: "heater" },
+            { common: "bicycle", spy: "scooter" },
+            { common: "wallet", spy: "purse" },
+            { common: "camera", spy: "video" },
+            { common: "doll", spy: "teddy" },
+            { common: "puzzle", spy: "game" },
+            { common: "ball", spy: "bat" },
+            { common: "glove", spy: "cap" },
+            { common: "coffee", spy: "juice" },
+            { common: "laptop", spy: "television" },
+            { common: "cat", spy: "lion" },
+            { common: "pencil", spy: "crayon" },
+            { common: "garden", spy: "farm" },
+            { common: "street", spy: "road" },
+            { common: "box", spy: "basket" },
+            { common: "paper", spy: "card" },
+            { common: "shoe", spy: "sandal" },
+            { common: "ball", spy: "frisbee" }
+        ];
     </script>
 </body>
 
